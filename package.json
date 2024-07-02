@@ -9,7 +9,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "jest --watch",
-    "tsc": "tsc"
+    "tsc": "tsc --noEmit"
   },
   "dependencies": {
     "clsx": "^2.1.1",
