@@ -4,6 +4,7 @@ import svgr from 'vite-plugin-svgr';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: 'blackjack-game', // name of the repository in github for github-pages
   server: {
     open: true,
   },
