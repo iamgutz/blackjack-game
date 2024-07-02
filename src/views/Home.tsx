@@ -3,6 +3,7 @@ import Input from '../components/Input';
 import Button from '../components/Button';
 import { useGameContext } from '../context/GameContext';
 import { ACTIONS, GAME_STATUS } from '../context/constants';
+import AppLogo from '../assets/blacjack-logo.svg';
 
 export default function HomeView() {
   const { state, dispatch } = useGameContext();
@@ -13,7 +14,9 @@ export default function HomeView() {
   };
   return (
     <div className="flex flex-col items-center justify-center gap-4 max-w-xl m-auto">
-      <h1 className="text-2xl font-bold text-center">Blackjack Game</h1>
+      <div className="px-6">
+        <AppLogo className="w-full" />
+      </div>
       <div className="flex flex-col justify-center gap-2 w-full">
         <Input
           type="text"

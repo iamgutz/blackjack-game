@@ -54,6 +54,7 @@ export const ACTIONS = {
   CHANGE_STATUS: 'CHANGE_STATUS',
   EXIT_GAME: 'EXIT_GAME',
   RESET_HANDS: 'RESET_HANDS',
+  ADD_SCORE: 'ADD_SCORE',
 };
 
 export const GAME_STATUS = {

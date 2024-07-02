@@ -9,6 +9,7 @@ import { calculateHandValue } from '../utils/calculateHandValue';
 import { BiLogOut } from 'react-icons/bi';
 import { GiCardDraw, GiCardPlay } from 'react-icons/gi';
 import clsx from 'clsx';
+import AppLogo from '../assets/blacjack-logo.svg';
 
 export default function PokerView() {
   const { dispatch, state } = useGameContext();
@@ -20,7 +21,7 @@ export default function PokerView() {
   const isIdle = state.gameStatus === GAME_STATUS.IDLE;
   const isDraw = state.gameStatus === GAME_STATUS.DRAW;
 
-  const resetScores = () => {
+  const resetResults = () => {
     setDealerResult('');
     setPlayerResult('');
   };
@@ -33,6 +34,27 @@ export default function PokerView() {
     dispatch(ACTIONS.CHANGE_STATUS, GAME_STATUS.IDLE);
   };
 
+  const handleDealerWon = () => {
+    dispatch(ACTIONS.CHANGE_STATUS, GAME_STATUS.DEALER_WON);
+    dispatch(ACTIONS.ADD_SCORE, 'dealer');
+  };
+
+  const handlePlayerWon = () => {
+    dispatch(ACTIONS.CHANGE_STATUS, GAME_STATUS.PLAYER_WON);
+    dispatch(ACTIONS.ADD_SCORE, 'player');
+  };
+
+  const handleSetResults = ({
+    dealerHandValue,
+    playerHandValue,
+  }: {
+    dealerHandValue: number;
+    playerHandValue: number;
+  }) => {
+    setDealerResult(dealerHandValue);
+    setPlayerResult(playerHandValue);
+  };
+
   const startGame = useCallback(() => {
     // Create and shuffle the deck
     const deck = shuffleDeck(generateDeck());
@@ -42,7 +64,7 @@ export default function PokerView() {
     const dealerHand: CardType[] = [extractCard(deck), extractCard(deck)];
 
     // Set the deck and hands in the state
-    resetScores();
+    resetResults();
     dispatch(ACTIONS.RESET_HANDS);
     dispatch(ACTIONS.SET_DECK, deck);
     dispatch(ACTIONS.DEAL_CARD, { hand: 'player', card: playerHand[0] });
@@ -69,10 +91,8 @@ export default function PokerView() {
 
     // Check if player busts (hand value exceeds 21)
     if (playerHandValue > 21) {
-      dispatch(ACTIONS.CHANGE_STATUS, GAME_STATUS.DEALER_WON);
-
-      setDealerResult(dealerHandValue);
-      setPlayerResult(playerHandValue);
+      handleDealerWon();
+      handleSetResults({ dealerHandValue, playerHandValue });
     }
   };
 
@@ -104,17 +124,16 @@ export default function PokerView() {
 
     if (dealerHandValue > 21 || (playerHandValue < 22 && playerHandValue > dealerHandValue)) {
       // Dealer busts, player wins
-      dispatch(ACTIONS.CHANGE_STATUS, GAME_STATUS.PLAYER_WON);
+      handlePlayerWon();
     } else if (playerHandValue < dealerHandValue || playerHandValue > 21) {
       // Dealer wins
-      dispatch(ACTIONS.CHANGE_STATUS, GAME_STATUS.DEALER_WON);
+      handleDealerWon();
     } else {
       // tie game
       dispatch(ACTIONS.CHANGE_STATUS, GAME_STATUS.DRAW);
     }
 
-    setDealerResult(dealerHandValue);
-    setPlayerResult(playerHandValue);
+    handleSetResults({ dealerHandValue, playerHandValue });
   };
 
   useEffect(() => {
@@ -126,7 +145,9 @@ export default function PokerView() {
   return (
     <div className="flex flex-col flex-1">
       <div className="flex justify-between items-center py-2 px-4">
-        <h1 className="h5">Blackjack Game</h1>
+        <div className="w-36">
+          <AppLogo className="w-full h-auto" />
+        </div>
         <Button onClick={handleExitGame}>
           <BiLogOut className="mr-2" />
           Exit game
@@ -135,9 +156,18 @@ export default function PokerView() {
 
       <div className="flex flex-col">
         <div className="flex flex-col justify-center md:justify-start items-center my-5 px-4">
+          {!dealerWon && !playerWon && !isDraw && (
+            <>
+              <h2 className="font-semibold">Score</h2>
+              <div className="flex gap-2">
+                <h6 className="flex items-center gap-2">Dealer: {state?.score?.dealer}</h6>
+                <h6 className="flex items-center gap-2">Player: {state?.score?.player}</h6>
+              </div>
+            </>
+          )}
           {dealerWon && <h2 className="text-red-500 font-semibold">Dealer Won!</h2>}
           {playerWon && <h2 className="text-green-500 font-semibold">You Won!</h2>}
-          {isDraw && <h2 className="text-amber-500 font-semibold">It's tie!</h2>}
+          {isDraw && <h2 className="text-amber-500 font-semibold">It's a tie!</h2>}
           <div className="flex gap-4 md:gap-2">
             {dealerResult && (
               <h6 className="flex items-center gap-2">

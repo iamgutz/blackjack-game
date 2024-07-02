@@ -5,15 +5,26 @@ import { CardType } from '../definitions';
 
 type GameStatus = (typeof GAME_STATUS)[keyof typeof GAME_STATUS];
 
+type ScoreType = {
+  dealer: number;
+  player: number;
+};
+
 interface GameState {
   deck: string[];
   playerHand: CardType[];
   dealerHand: CardType[];
   gameStatus: GameStatus;
   playerName: string;
+  score: ScoreType;
 }
 
 type GameAction = { type: string; payload?: any };
+
+const initialScore: ScoreType = {
+  dealer: 0,
+  player: 0,
+};
 
 const initialState: GameState = {
   deck: [],
@@ -21,6 +32,7 @@ const initialState: GameState = {
   dealerHand: [],
   gameStatus: GAME_STATUS.EXITED,
   playerName: '',
+  score: initialScore,
 };
 
 function gameReducer(state: GameState, action: GameAction): GameState {
@@ -43,6 +55,12 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       return { ...state, playerHand: [], dealerHand: [] };
     case ACTIONS.EXIT_GAME:
       return { ...initialState };
+    case ACTIONS.ADD_SCORE:
+      if (action.payload === 'player') {
+        return { ...state, score: { ...state.score, player: state.score.player + 1 } };
+      } else {
+        return { ...state, score: { ...state.score, dealer: state.score.dealer + 1 } };
+      }
     default:
       return state;
   }
@@ -61,8 +79,8 @@ interface GameProviderProps {
 
 export function GameProvider({ children }: GameProviderProps) {
   const storedState = localStorage.getItem(LOCAL_STORAGE_KEY);
-  const parsedState = JSON.parse(storedState || '');
-  const [state, dispatch] = useReducer(gameReducer, parsedState || initialState);
+  const parsedState = storedState ? JSON.parse(storedState) : {};
+  const [state, dispatch] = useReducer(gameReducer, { ...initialState, ...parsedState });
   const contextDispatch = (actionType: GameAction['type'], payload?: any) => {
     const action: GameAction = { type: actionType, payload } as GameAction;
     dispatch(action);
