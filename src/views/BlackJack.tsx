@@ -81,8 +81,8 @@ export default function PokerView() {
 
     const deck = [...state.deck] as [];
     const card = extractCard(deck); // remove the last element of the array
-    dispatch('SET_DECK', deck);
-    dispatch('DEAL_CARD', { hand: 'player', card });
+    dispatch(ACTIONS.SET_DECK, deck);
+    dispatch(ACTIONS.DEAL_CARD, { hand: 'player', card });
 
     // Calculate total value of player's hand
     const playerHand = [...state.playerHand, card];
@@ -144,24 +144,19 @@ export default function PokerView() {
 
   return (
     <div className="flex flex-col flex-1">
-      <div className="flex justify-between items-center py-2 px-4">
-        <div className="w-36">
-          <AppLogo className="w-full h-auto" />
-        </div>
-        <Button onClick={handleExitGame}>
-          <BiLogOut className="mr-2" />
-          Exit game
-        </Button>
-      </div>
-
       <div className="flex flex-col">
         <div className="flex flex-col justify-center md:justify-start items-center my-5 px-4">
           {!dealerWon && !playerWon && !isDraw && (
             <>
-              <h2 className="font-semibold">Score</h2>
+              <div className="w-36">
+                <AppLogo className="w-full h-auto" />
+              </div>
               <div className="flex gap-2">
-                <h6 className="flex items-center gap-2">Dealer: {state?.score?.dealer}</h6>
-                <h6 className="flex items-center gap-2">Player: {state?.score?.player}</h6>
+                <h6 className="flex items-center gap-2">
+                  <span>Score:</span>
+                  <span>Dealer ({state?.score?.dealer})</span>
+                  <span>Player ({state?.score?.player})</span>
+                </h6>
               </div>
             </>
           )}
@@ -187,14 +182,20 @@ export default function PokerView() {
           <div className="overflow-hidden pb-3">
             <h5 className="text-center my-3">Dealer's Hand</h5>
             <div className="flex justify-center [&>*:nth-child(odd)]:top-5">
-              {state.dealerHand.map((card: CardType) => (
-                <div className="relative flex-1 max-w-32 max-h-64">
-                  <Card
-                    variant={getCardName(card)}
-                    className="w-40 max-h-60"
-                  />
-                </div>
-              ))}
+              {state.dealerHand.map((card: CardType) => {
+                const cardName = getCardName(card);
+                return (
+                  <div
+                    key={cardName}
+                    className="relative flex-1 max-w-32 max-h-64"
+                  >
+                    <Card
+                      variant={cardName}
+                      className="w-40 max-h-60"
+                    />
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -203,28 +204,45 @@ export default function PokerView() {
               Your Hand
             </h5>
             <div className="flex justify-center [&>*:nth-child(even)]:top-5 [&>*:last-child]:basis-3">
-              {state.playerHand.map((card: CardType) => (
-                <div className="relative flex-1 max-w-32 max-h-64">
-                  <Card
-                    variant={getCardName(card)}
-                    className="w-40 max-h-60"
-                  />
-                </div>
-              ))}
+              {state.playerHand.map((card: CardType) => {
+                const cardName = getCardName(card);
+                return (
+                  <div
+                    key={cardName}
+                    className="relative flex-1 max-w-32 max-h-64"
+                  >
+                    <Card
+                      variant={cardName}
+                      className="w-40 max-h-60"
+                    />
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
-        <div className="flex items-center justify-center gap-3">
+        <div>
           {!isPlaying && !isIdle && (
-            <Button
-              variant="success"
-              onClick={handleOnPlayAgain}
-            >
-              PLAY AGAIN
-            </Button>
+            <div className="flex flex-col items-center gap-6">
+              <div className="w-36">
+                <AppLogo className="w-full h-auto" />
+              </div>
+              <div className="flex gap-3">
+                <Button
+                  variant="success"
+                  onClick={handleOnPlayAgain}
+                >
+                  PLAY AGAIN
+                </Button>
+                <Button onClick={handleExitGame}>
+                  <BiLogOut className="mr-2" />
+                  Exit game
+                </Button>
+              </div>
+            </div>
           )}
           {isPlaying && (
-            <>
+            <div className="flex items-center justify-center gap-3">
               <Button
                 variant="warning"
                 onClick={handleOnHit}
@@ -241,7 +259,7 @@ export default function PokerView() {
                 <GiCardDraw className="mr-2" />
                 STAND
               </Button>
-            </>
+            </div>
           )}
         </div>
       </div>
