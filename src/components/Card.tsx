@@ -1,6 +1,6 @@
 import { ElementType } from 'react';
 import Joker from '../assets/deck/Group.svg';
-import Behind from '../assets/deck/Group-1.svg';
+import Cover from '../assets/deck/Group-1.svg';
 import clubsA from '../assets/deck/Group-2.svg';
 import spadesA from '../assets/deck/Group-3.svg';
 import heartsA from '../assets/deck/Group-4.svg';
@@ -56,7 +56,7 @@ import diamonds6 from '../assets/deck/Group-53.svg';
 
 const DECK_CARDS: Record<string, ElementType> = {
   joker: Joker,
-  behind: Behind,
+  cover: Cover,
   clubsA: clubsA,
   spadesA: spadesA,
   heartsA: heartsA,

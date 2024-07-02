@@ -20,6 +20,7 @@ export default function PokerView() {
   const isPlaying = state.gameStatus === GAME_STATUS.PLAYING;
   const isIdle = state.gameStatus === GAME_STATUS.IDLE;
   const isDraw = state.gameStatus === GAME_STATUS.DRAW;
+  const revealCards = dealerWon || playerWon;
 
   const resetResults = () => {
     setDealerResult('');
@@ -143,9 +144,9 @@ export default function PokerView() {
   }, [state.gameStatus, state.playerHand, startGame, isIdle]);
 
   return (
-    <div className="flex flex-col flex-1">
+    <div className="flex flex-col flex-1 container m-auto justify-center">
       <div className="flex flex-col">
-        <div className="flex flex-col justify-center md:justify-start items-center my-5 px-4">
+        <div className="flex flex-col justify-center md:justify-start items-center my-1 px-4">
           {!dealerWon && !playerWon && !isDraw && (
             <>
               <div className="w-36">
@@ -160,38 +161,45 @@ export default function PokerView() {
               </div>
             </>
           )}
-          {dealerWon && <h2 className="text-red-500 font-semibold">Dealer Won!</h2>}
-          {playerWon && <h2 className="text-green-500 font-semibold">You Won!</h2>}
-          {isDraw && <h2 className="text-amber-500 font-semibold">It's a tie!</h2>}
-          <div className="flex gap-4 md:gap-2">
-            {dealerResult && (
-              <h6 className="flex items-center gap-2">
+          <h2
+            className={clsx([
+              'font-semibold text-center',
+              dealerWon && 'text-red-500',
+              playerWon && 'text-green-500',
+              isDraw && 'text-amber-500',
+            ])}
+          >
+            {dealerWon && 'Dealer Won!'}
+            {playerWon && 'You Won!'}
+            {isDraw && "It's a tie!"}
+          </h2>
+          {dealerResult && playerResult && (
+            <h6 className="flex items-center gap-2">
+              <span>
                 Dealer: <span className={clsx([dealerWon && 'text-red-500'])}>{dealerResult}</span>
-              </h6>
-            )}
-            {playerResult && (
-              <h6 className="flex items-center gap-2">
-                {state.playerName}:{' '}
+              </span>
+              <span>
+                {`${state.playerName}: `}
                 <span className={clsx([playerWon && 'text-green-500'])}>{playerResult}</span>
-              </h6>
-            )}
-          </div>
+              </span>
+            </h6>
+          )}
         </div>
 
         <div className="flex flex-col flex-1 pb-6">
-          <div className="overflow-hidden pb-3">
+          <div className="pb-3">
             <h5 className="text-center my-3">Dealer's Hand</h5>
-            <div className="flex justify-center [&>*:nth-child(odd)]:top-5">
-              {state.dealerHand.map((card: CardType) => {
+            <div className="flex justify-center [&>*:nth-child(even)]:top-5 [&>*:first-child]:ml-0">
+              {state.dealerHand.map((card: CardType, i) => {
                 const cardName = getCardName(card);
                 return (
                   <div
                     key={cardName}
-                    className="relative flex-1 max-w-32 max-h-64"
+                    className="relative w-2/12 md:w-1/12 max-w-40 -ml-10"
                   >
                     <Card
-                      variant={cardName}
-                      className="w-40 max-h-60"
+                      variant={!revealCards && i > 0 ? 'cover' : cardName}
+                      className="w-full h-auto"
                     />
                   </div>
                 );
@@ -199,21 +207,21 @@ export default function PokerView() {
             </div>
           </div>
 
-          <div className="overflow-hidden pb-3">
+          <div className="pb-3">
             <h5 className="text-center my-3 flex flex-col justify-center items-center">
               Your Hand
             </h5>
-            <div className="flex justify-center [&>*:nth-child(even)]:top-5 [&>*:last-child]:basis-3">
+            <div className="flex justify-center [&>*:nth-child(even)]:top-5 [&>*:first-child]:ml-0">
               {state.playerHand.map((card: CardType) => {
                 const cardName = getCardName(card);
                 return (
                   <div
                     key={cardName}
-                    className="relative flex-1 max-w-32 max-h-64"
+                    className="relative w-2/12 md:w-1/12 max-w-40 -ml-10"
                   >
                     <Card
                       variant={cardName}
-                      className="w-40 max-h-60"
+                      className="w-full h-auto"
                     />
                   </div>
                 );
@@ -224,10 +232,10 @@ export default function PokerView() {
         <div>
           {!isPlaying && !isIdle && (
             <div className="flex flex-col items-center gap-6">
-              <div className="w-36">
+              <div className="md:w-36 w-24">
                 <AppLogo className="w-full h-auto" />
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-col md:flex-row gap-3">
                 <Button
                   variant="success"
                   onClick={handleOnPlayAgain}
@@ -242,7 +250,7 @@ export default function PokerView() {
             </div>
           )}
           {isPlaying && (
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-3">
               <Button
                 variant="warning"
                 onClick={handleOnHit}
