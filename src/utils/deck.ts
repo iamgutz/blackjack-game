@@ -1,14 +1,14 @@
 import { RANK_VALUES, SUITS } from './constants';
-import { Card } from '../definitions';
+import { CardType } from '../definitions';
 
-export function generateDeck(): Card[] {
+export function generateDeck(): CardType[] {
   const suits = Object.values(SUITS);
   const ranks = Object.keys(RANK_VALUES);
-  const deck: Card[] = [];
+  const deck: CardType[] = [];
 
   suits.forEach(suit => {
     ranks.forEach(rank => {
-      const card: Card = { rank, suit };
+      const card: CardType = { rank, suit };
       deck.push(card);
     });
   });
@@ -16,7 +16,7 @@ export function generateDeck(): Card[] {
   return deck;
 }
 
-export function shuffleDeck(deck: Card[]): Card[] {
+export function shuffleDeck(deck: CardType[]): CardType[] {
   // Loop through each card in the deck (from the last card to the second card)
   for (let i = deck.length - 1; i > 0; i--) {
     // Generate a random index 'j' between 0 and 'i' (inclusive)
@@ -30,9 +30,15 @@ export function shuffleDeck(deck: Card[]): Card[] {
   return deck;
 }
 
-export const getCardName = (card: Card) => `${card.suit}${card.rank}`;
+export const getCardName = (card: CardType) => `${card.suit}${card.rank}`;
 
-// Deals a specified number of cards from the deck to a player or the community.
-export function dealCards(deck: Card[], numCards: number): Card[] {
-  return deck.splice(0, numCards);
+export function extractCard(deck: CardType[]): CardType {
+  if (deck.length > 0) {
+    return deck.pop()!; // remove and return the last element from the deck array while asserting that it is not undefined
+  }
+  const fakeCard: CardType = {
+    suit: '',
+    rank: '',
+  };
+  return fakeCard;
 }

@@ -1,7 +1,7 @@
-import { Card } from '../definitions';
+import { CardType } from '../definitions';
 import { RANK_VALUES } from './constants';
 
-export const calculateHandValue = (hand: Card[]): number => {
+export const calculateHandValue = (hand: CardType[]): number => {
   let sum = 0;
   let aceCount = 0;
 

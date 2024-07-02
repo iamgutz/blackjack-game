@@ -34,12 +34,12 @@ export default function Button({
   return (
     <button
       className={clsx([
-        'py-3 px-6 h-fit',
+        'flex items-center py-3 px-6 h-fit',
         'rounded-full text-2xl font-semibold bg-gradient-to-b from-20% transition-all duration-200 ease-in-out',
         'border border-transparent focus:outline-1 outline-teal-200',
         variantClassName,
         disabled &&
-          'cursor-not-allowed from-gray-700 bg-gray-500 border-gray-500 hover:border-gray-500 opacity-50',
+          'cursor-not-allowed !from-gray-700 !bg-gray-500 !border-gray-500 !hover:border-gray-500 opacity-50',
         className,
       ])}
       disabled={disabled}

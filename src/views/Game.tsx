@@ -14,6 +14,7 @@ export default function GameView() {
         backgroundSize: 'contain',
         backgroundRepeat: 'repeat',
         backgroundPosition: 'center center',
+        backgroundBlendMode: 'multiply',
       }}
     >
       {state.gameStatus === GAME_STATUS.EXITED ? <HomeView /> : <BlackJackView />}
